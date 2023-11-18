@@ -69,7 +69,9 @@ class Crawler:
         inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(story_id)
 
         for chapter_name in chapters_name:
-            chapter_slug = _chapter.get_chapter_slug(chapter_name=chapter_name)
+            chapter_slug = _chapter.get_chapter_slug(
+                chapter_name=chapter_name, story_title=story_details.get("title", "")
+            )
             if chapter_slug in inserted_chapters_slug:
                 continue
 
