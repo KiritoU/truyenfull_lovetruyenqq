@@ -37,7 +37,7 @@ class Crawler:
             chapter_name=chapter_name, soup=soup
         )
 
-        self._lovetruyenqq.insert_chapter(
+        self._lovetruyenqq.get_or_insert_chapter(
             story_id=story_id,
             story_title=story_title,
             chapter_name=chapter_name,

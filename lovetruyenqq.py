@@ -326,3 +326,23 @@ class Lovetruyenqq:
                 filename="madara.insert_chapter_content_to_posts.log",
             )
             return 0
+
+    def get_or_insert_chapter(
+        self,
+        story_id: int,
+        story_title: str,
+        chapter_name: str,
+        content: str,
+    ):
+        chapter_post_slug = slugify(f"{story_title}-{chapter_name}")
+        condition = f"""post_name='{chapter_post_slug}' AND post_type='chap'"""
+        be_post = self.database.select_all_from(table=f"posts", condition=condition)
+        if not be_post:
+            return self.insert_chapter(
+                story_id=story_id,
+                story_title=story_title,
+                chapter_name=chapter_name,
+                content=content,
+            )
+        else:
+            return be_post[0][0]
