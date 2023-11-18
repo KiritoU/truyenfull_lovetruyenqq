@@ -101,6 +101,7 @@ class Crawler:
 
             self.crawl_written_story(href=href, labels=labels)
         except Exception as e:
+            print(e)
             logging.error(f"[-] Unknow error occurred while crawling row...")
 
     def crawl_page(self, page: int = 1):
