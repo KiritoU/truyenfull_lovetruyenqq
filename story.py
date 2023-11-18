@@ -83,9 +83,7 @@ class Story:
                 if not a:
                     continue
 
-                chapter_title = a.get("title", "").strip()
-                if not chapter_title:
-                    chapter_title = a.text.strip()
+                chapter_title = a.text.strip()
 
                 href = a.get("href", "")
                 if href:
