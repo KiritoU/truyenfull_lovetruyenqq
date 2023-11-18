@@ -25,7 +25,7 @@ class Lovetruyenqq:
     def get_backend_chapters_slug(self, story_id: int) -> list:
         chapters = self.database.select_all_from(
             table=f"posts",
-            condition=f'post_parent=story_id AND post_type="chap"',
+            condition=f'post_parent={story_id} AND post_type="chap"',
         )
 
         chapters_slug = [chapter[11] for chapter in chapters]
