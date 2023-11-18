@@ -44,10 +44,10 @@ class Lovetruyenqq:
         # TODO
         return int(time.time())
 
-    def download_and_save_thumb(self, cover_url: str):
+    def download_and_save_thumb(self, story_slug: str, cover_url: str):
         try:
             # Download the cover image
-            image_name = cover_url.split("/")[-1]
+            image_name = story_slug + ".png"
             thumb_save_path, is_not_saved = helper.save_image(
                 image_url=cover_url, image_name=image_name, is_thumb=True
             )
@@ -92,12 +92,12 @@ class Lovetruyenqq:
         )
         return _wp_attachment_metadata
 
-    def insert_thumb(self, cover_url: str) -> int:
+    def insert_thumb(self, story_slug: str, cover_url: str) -> int:
         if not cover_url:
             return 0
 
         saved_thumb_url, thumb_save_path = self.download_and_save_thumb(
-            cover_url=cover_url
+            story_slug=story_slug, cover_url=cover_url
         )
 
         thumb_name = saved_thumb_url.split("/")[-1]
@@ -209,7 +209,9 @@ class Lovetruyenqq:
         return term_ids
 
     def insert_comic(self, story_data: dict):
-        thumb_id = self.insert_thumb(story_data.get("cover_url"))
+        thumb_id = self.insert_thumb(
+            story_data.get("slug", ""), story_data.get("cover_url")
+        )
         timeupdate = self.get_timeupdate()
         data = (
             0,
