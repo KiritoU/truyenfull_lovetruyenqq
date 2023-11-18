@@ -3,8 +3,8 @@ from slugify import slugify
 
 
 class Chapter:
-    def get_chapter_slug(self, chapter_name: str) -> str:
-        return slugify(chapter_name)
+    def get_chapter_slug(self, chapter_name: str, story_title: str) -> str:
+        return slugify(f"{story_title}-{chapter_name}")
 
     def get_chapter_content(self, chapter_name: str, soup: BeautifulSoup) -> dict:
         chapter_c = soup.find("div", {"id": "chapter-c"})

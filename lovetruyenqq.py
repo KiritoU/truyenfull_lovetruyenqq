@@ -291,7 +291,9 @@ class Lovetruyenqq:
         chapter_name: str,
         content: str,
     ):
-        chapter_post_slug = slugify(f"{story_title}-{chapter_name}")
+        chapter_post_slug = _chapter.get_chapter_slug(
+            chapter_name=chapter_name, story_title=story_title
+        )
         timeupdate = self.get_timeupdate()
         data = (
             0,
@@ -334,7 +336,9 @@ class Lovetruyenqq:
         chapter_name: str,
         content: str,
     ):
-        chapter_post_slug = slugify(f"{story_title}-{chapter_name}")
+        chapter_post_slug = _chapter.get_chapter_slug(
+            chapter_name=chapter_name, story_title=story_title
+        )
         condition = f"""post_name='{chapter_post_slug}' AND post_type='chap'"""
         be_post = self.database.select_all_from(table=f"posts", condition=condition)
         if not be_post:
