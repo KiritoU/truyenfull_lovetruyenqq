@@ -85,26 +85,26 @@ class Crawler:
             )
 
     def crawl_item(self, row: BeautifulSoup):
-        try:
-            col_xs_7 = row.find("div", class_="col-xs-7")
-            a = col_xs_7.find("a")
-            href = a.get("href")
-            if not href:
-                logging.error(f"Could not find href for row...")
-                return
-            label_titles = col_xs_7.find_all("span", class_="label-title")
-            labels = []
-            for label in label_titles:
-                labels.extend(label.get("class", []))
+        col_xs_7 = row.find("div", class_="col-xs-7")
+        a = col_xs_7.find("a")
+        href = a.get("href")
+        if not href:
+            logging.error(f"Could not find href for row...")
+            return
+        label_titles = col_xs_7.find_all("span", class_="label-title")
+        labels = []
+        for label in label_titles:
+            labels.extend(label.get("class", []))
 
-            labels = list(set(labels))
-            labels.remove("label-title")
-            labels = [label.replace("label-", "") for label in labels]
+        labels = list(set(labels))
+        labels.remove("label-title")
+        labels = [label.replace("label-", "") for label in labels]
 
-            self.crawl_written_story(href=href, labels=labels)
-        except Exception as e:
-            print(e)
-            logging.error(f"[-] Unknow error occurred while crawling row...")
+        self.crawl_written_story(href=href, labels=labels)
+        # try:
+        # except Exception as e:
+        #     print(e)
+        #     logging.error(f"[-] Unknow error occurred while crawling row...")
 
     def crawl_page(self, page: int = 1):
         url = f"{CONFIG.TRUYENFULL_HOMEPAGE}/danh-sach/truyen-moi/trang-{page}/"
