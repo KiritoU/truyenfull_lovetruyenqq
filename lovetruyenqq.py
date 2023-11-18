@@ -126,7 +126,6 @@ class Lovetruyenqq:
             "attachment",
             "image/png",
             0,
-            "",
         )
 
         thumb_id = self.database.insert_into(table="posts", data=thumb_post_data)
