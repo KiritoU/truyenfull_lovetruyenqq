@@ -97,7 +97,8 @@ class Crawler:
             labels.extend(label.get("class", []))
 
         labels = list(set(labels))
-        labels.remove("label-title")
+        if "label-title" in labels:
+            labels.remove("label-title")
         labels = [label.replace("label-", "") for label in labels]
 
         self.crawl_written_story(href=href, labels=labels)
