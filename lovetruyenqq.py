@@ -164,7 +164,7 @@ class Lovetruyenqq:
     ):
         try:
             terms = (
-                [term.strip() for term in terms.split("-")] if not is_title else [terms]
+                [term.strip() for term in terms.split(",")] if not is_title else [terms]
             )
         except Exception as e:
             logging.error(f"[-] Error in insert terms: {terms}")
