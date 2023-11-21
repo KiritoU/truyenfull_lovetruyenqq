@@ -17,13 +17,13 @@ def main():
     try:
         is_netttruyen_domain_work = _crawler.is_truyenfull_domain_work()
         if not is_netttruyen_domain_work:
-            send_direct_message(msg="Nettruyen domain might be changed!!!")
+            send_direct_message(msg="Truyenfull domain might be changed!!!")
             sys.exit(1)
 
         last_page = _crawler.get_truyenfull_last_page()
         ic(last_page)
 
-        for i in range(2, last_page + 1):
+        for i in range(last_page, 1, -1):
             _crawler.crawl_page(page=i)
             sleep(CONFIG.WAIT_BETWEEN_ALL)
 

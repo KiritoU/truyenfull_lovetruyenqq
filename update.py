@@ -17,7 +17,7 @@ def main():
     try:
         is_netttruyen_domain_work = _crawler.is_truyenfull_domain_work()
         if not is_netttruyen_domain_work:
-            send_direct_message(msg="Nettruyen domain might be changed!!!")
+            send_direct_message(msg="Truyenfull domain might be changed!!!")
             sys.exit(1)
         _crawler.crawl_page(page=1)
     except Exception as e:
