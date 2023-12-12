@@ -132,9 +132,10 @@ class Crawler:
         if CONFIG.DEBUG:
             inserted_chapters_slug = []
         else:
-            inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(
-                story_id
-            )
+            inserted_chapters_slug = []
+            # inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(
+            #     story_id
+            # )
 
         for chapter_name in chapters_name:
             chapter_slug = _chapter.get_chapter_slug(
