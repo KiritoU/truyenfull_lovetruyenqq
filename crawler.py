@@ -4,11 +4,13 @@ import re
 import sys
 from pathlib import Path
 from time import sleep
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 from icecream import ic
 from slugify import slugify
+from websocket import create_connection
 
 from chapter import _chapter
 from helper import helper
@@ -17,6 +19,27 @@ from settings import CONFIG
 from story import _story
 
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=logging.INFO)
+
+
+from_source = urlparse(CONFIG.TRUYENFULL_HOMEPAGE).netloc
+ws = create_connection(f"ws://{CONFIG.WS_NETLOC}/ws/source/{from_source}/")
+
+
+def get_slug_index(slug: str, file_path: str) -> int:
+    with open(file_path, "r") as f:
+        stories = [story.strip("\n") for story in f.readlines()]
+    if slug not in stories:
+        stories.append(slug)
+        with open(file_path, "a") as f:
+            print(slug, file=f)
+
+    story_id = stories.index(slug) + 1
+    return story_id
+
+
+def send_ws(data: dict):
+    send_data = {"message": data}
+    ws.send(json.dumps(send_data))
 
 
 class Crawler:
@@ -37,12 +60,37 @@ class Crawler:
             chapter_name=chapter_name, soup=soup
         )
 
-        self._lovetruyenqq.get_or_insert_chapter(
-            story_id=story_id,
-            story_title=story_title,
-            chapter_name=chapter_name,
-            content=chapter_content,
+        if not chapter_content:
+            return
+
+        if CONFIG.DEBUG:
+            chapter_post_slug = _chapter.get_chapter_slug(
+                chapter_name=chapter_name, story_title=story_title
+            )
+            chapter_post_id = get_slug_index(
+                slug=chapter_post_slug, file_path="test/chapters.txt"
+            )
+        else:
+            chapter_post_id = self._lovetruyenqq.get_or_insert_chapter(
+                story_id=story_id,
+                story_title=story_title,
+                chapter_name=chapter_name,
+                content=chapter_content,
+            )
+
+        send_ws(
+            data={
+                "message": f"{story_title} => {chapter_name}",
+                "crawled_chapter": {
+                    "post_id": story_id,
+                    "story_title": story_title,
+                    "chapter_name": chapter_name,
+                    "chapter_href": chapter_href,
+                    "chapter_post_id": chapter_post_id,
+                },
+            }
         )
+
         logging.info(f"Inserted {chapter_name}")
 
     def crawl_written_story(self, href: str, labels: list[str]):
@@ -54,19 +102,39 @@ class Crawler:
         #     f.write(json.dumps(comic_details, indent=4, ensure_ascii=False))
         # sys.exit(0)
 
-        story_id = self._lovetruyenqq.get_or_insert_comic(story_details)
+        if CONFIG.DEBUG:
+            story_id = get_slug_index(
+                slug=story_details.get("slug"), file_path="test/stories.txt"
+            )
+        else:
+            story_id = self._lovetruyenqq.get_or_insert_comic(story_details)
         logging.info(f"Got (or inserted) comic: {story_id}")
-
-        # with open("json/comic.json", "w") as f:
-        #     f.write(json.dumps(comic_details, indent=4, ensure_ascii=False))
 
         if not story_id:
             logging.error(f"Cannot crawl comic with: {href}")
             return
 
+        story_details["href"] = href
+        story_details["post_id"] = story_id
+
+        # with open("json/comic.json", "w") as f:
+        #     f.write(json.dumps(story_details, indent=4, ensure_ascii=False))
+
+        send_ws(
+            data={
+                "message": f"Crawling {href}",
+                "story_details": story_details,
+            }
+        )
+
         chapters = story_details.get("chapters", {})
         chapters_name = list(chapters.keys())
-        inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(story_id)
+        if CONFIG.DEBUG:
+            inserted_chapters_slug = []
+        else:
+            inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(
+                story_id
+            )
 
         for chapter_name in chapters_name:
             chapter_slug = _chapter.get_chapter_slug(

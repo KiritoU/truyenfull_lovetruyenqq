@@ -322,7 +322,7 @@ class Lovetruyenqq:
         )
 
         try:
-            self.database.insert_into(table=f"posts", data=data)
+            return self.database.insert_into(table=f"posts", data=data)
         except Exception as e:
             helper.error_log(
                 msg=f"Failed to insert comic\n{e}",
