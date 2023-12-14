@@ -23,6 +23,7 @@ logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=loggin
 
 from_source = urlparse(CONFIG.TRUYENFULL_HOMEPAGE).netloc
 ws = create_connection(f"ws://{CONFIG.WS_NETLOC}/ws/source/{from_source}/")
+http_api = f"http://{CONFIG.WS_NETLOC}"
 
 
 def get_slug_index(slug: str, file_path: str) -> int:
@@ -40,6 +41,11 @@ def get_slug_index(slug: str, file_path: str) -> int:
 def send_ws(data: dict):
     send_data = {"message": data}
     ws.send(json.dumps(send_data))
+
+
+def story_and_chapters_update(update_data: dict):
+    update_endpoint = f"{http_api}/source/novelnchapterupdate/"
+    requests.post(update_endpoint, json=update_data)
 
 
 class Crawler:
@@ -81,13 +87,19 @@ class Crawler:
         send_ws(
             data={
                 "message": f"{story_title} => {chapter_name}",
-                "crawled_chapter": {
-                    "post_id": story_id,
-                    "story_title": story_title,
-                    "chapter_name": chapter_name,
-                    "chapter_href": chapter_href,
-                    "chapter_post_id": chapter_post_id,
-                },
+            }
+        )
+        story_and_chapters_update(
+            update_data={
+                "crawled_chapters": [
+                    {
+                        "post_id": story_id,
+                        "story_title": story_title,
+                        "chapter_name": chapter_name,
+                        "chapter_href": chapter_href,
+                        "chapter_post_id": chapter_post_id,
+                    },
+                ]
             }
         )
 
@@ -123,28 +135,42 @@ class Crawler:
         send_ws(
             data={
                 "message": f"Crawling {href}",
+            }
+        )
+        story_and_chapters_update(
+            update_data={
                 "story_details": story_details,
             }
         )
+
+        crawled_chapters = []
 
         chapters = story_details.get("chapters", {})
         chapters_name = list(chapters.keys())
         if CONFIG.DEBUG:
             inserted_chapters_slug = []
         else:
-            inserted_chapters_slug = []
-            # inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(
-            #     story_id
-            # )
+            inserted_chapters_slug = self._lovetruyenqq.get_backend_chapters_slug(
+                story_id
+            )
 
         for chapter_name in chapters_name:
             chapter_slug = _chapter.get_chapter_slug(
                 chapter_name=chapter_name, story_title=story_details.get("title", "")
             )
+            chapter_href = chapters.get(chapter_name)
+
             if chapter_slug in inserted_chapters_slug:
+                crawled_chapters.append(
+                    {
+                        "post_id": story_id,
+                        "story_title": story_details.get("title"),
+                        "chapter_name": chapter_name,
+                        "chapter_href": chapter_href,
+                    }
+                )
                 continue
 
-            chapter_href = chapters.get(chapter_name)
             self.crawl_chapter(
                 story_title=story_details.get("title"),
                 story_id=story_id,
@@ -152,6 +178,7 @@ class Crawler:
                 chapter_name=chapter_name,
                 chapter_href=chapter_href,
             )
+        story_and_chapters_update(update_data={"crawled_chapters": crawled_chapters})
 
     def crawl_item(self, row: BeautifulSoup):
         col_xs_7 = row.find("div", class_="col-xs-7")
