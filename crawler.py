@@ -22,7 +22,7 @@ logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=loggin
 
 
 from_source = urlparse(CONFIG.TRUYENFULL_HOMEPAGE).netloc
-ws = create_connection(f"ws://{CONFIG.WS_NETLOC}/ws/source/{from_source}/")
+
 http_api = f"http://{CONFIG.WS_NETLOC}"
 
 
@@ -39,8 +39,12 @@ def get_slug_index(slug: str, file_path: str) -> int:
 
 
 def send_ws(data: dict):
+    ws = create_connection(f"ws://{CONFIG.WS_NETLOC}/ws/source/{from_source}/")
+
     send_data = {"message": data}
     ws.send(json.dumps(send_data))
+
+    ws.close()
 
 
 def story_and_chapters_update(update_data: dict):
