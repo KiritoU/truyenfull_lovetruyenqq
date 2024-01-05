@@ -26,6 +26,10 @@ from_source = urlparse(CONFIG.TRUYENFULL_HOMEPAGE).netloc
 http_api = f"http://{CONFIG.WS_NETLOC}"
 
 
+def check_license():
+    return True
+
+
 def get_slug_index(slug: str, file_path: str) -> int:
     with open(file_path, "r") as f:
         stories = [story.strip("\n") for story in f.readlines()]
@@ -119,6 +123,14 @@ class Crawler:
         # sys.exit(0)
 
         if CONFIG.DEBUG:
+            if CONFIG.DEBUG:
+                chapters = story_details["chapters"]
+                new_chapters = {}
+                for chapter_name in list(chapters.keys())[:5]:
+                    new_chapters[chapter_name] = chapters[chapter_name]
+
+                story_details["chapters"] = new_chapters
+
             story_id = get_slug_index(
                 slug=story_details.get("slug"), file_path="test/stories.txt"
             )
@@ -183,6 +195,12 @@ class Crawler:
                 chapter_href=chapter_href,
             )
         story_and_chapters_update(update_data={"crawled_chapters": crawled_chapters})
+        story_and_chapters_update(
+            update_data={
+                "story_details": story_details,
+                "update_story_stats": True,
+            }
+        )
 
     def crawl_item(self, row: BeautifulSoup):
         col_xs_7 = row.find("div", class_="col-xs-7")
@@ -227,6 +245,9 @@ class Crawler:
         return 1
 
     def get_truyenfull_last_page(self):
+        if not check_license():
+            return False
+
         url = f"{CONFIG.TRUYENFULL_HOMEPAGE}/danh-sach/truyen-moi/trang-1/"
         soup = helper.crawl_soup(url)
 
