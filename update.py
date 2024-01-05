@@ -21,7 +21,7 @@ def main():
             sys.exit(1)
         _crawler.crawl_page(page=1)
     except Exception as e:
-        ic(e)
+        print(e)
 
 
 if __name__ == "__main__":

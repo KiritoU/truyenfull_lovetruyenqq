@@ -28,7 +28,7 @@ def main():
             sleep(CONFIG.WAIT_BETWEEN_ALL)
 
     except Exception as e:
-        ic(e)
+        print(e)
 
 
 if __name__ == "__main__":
