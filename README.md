@@ -22,6 +22,9 @@
 
 # Cài đặt cần lưu ý ở file settings.py (trong trường hợp cần sửa lại hoặc chạy tool ở vps khác):
 
+- **DEBUG:** Để là False
+- **WS_NETLOC:** Địa chỉ IP và Port đã deploy cho manager
+
 - **user, password, host, port, database:** Kết nối tới database
 - **TABLE_PREFIX:** Bắt đầu tên table trong database (Hiện tại là wp\_)
 
