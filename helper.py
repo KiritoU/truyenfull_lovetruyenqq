@@ -25,9 +25,15 @@ class Helper:
         return header
 
     def download_url(self, url):
-        response = requests.get(url, headers=self.get_header())
-        sleep(0.1)
-        return response
+        for _ in range(3):
+            try:
+                response = requests.get(url, headers=self.get_header(), timeout=20)
+                sleep(0.1)
+                return response
+            except Exception as e:
+                logging.error(f"[-] Error while downloading {url}: {e}")
+                sleep(1 * 60)
+        return None
 
     def crawl_soup(self, url) -> BeautifulSoup:
         logging.info(f"[+] Crawling {url}")
