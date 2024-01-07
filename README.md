@@ -12,6 +12,8 @@
 
 > python all.py
 
+NOTE: Sau khi chạy 1 thời gian dài (đã crawl đủ các truyện thì có thể tắt session tmux này, chỉ chạy update để cập nhật truyện mới)
+
 ## Trong session tmux:
 
 **Khi muốn dừng tool**: ấn tổ hợp phím: Ctrl C
