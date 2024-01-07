@@ -33,9 +33,26 @@
 - **TELEGRAM_CHAT_ID:** Telegram ID của user hoặc group nhận thông báo khi domain truyenfull có thể die. Điền vào giữa dấu ""
 
 - **WAIT_BETWEEN_LATEST:** Thời gian đợi giữa 2 lần cào page 1 truyenfull để update: 5 \* 60 là 5 phút
-- **WAIT_BETWEEN_ALL:** Thời gian đợi giữa 2 lần cào từ page 2 tới page cuối của truyenfull để cào các truyện còn lại: 1 \* 20 là 20 giây
+- **WAIT_BETWEEN_ALL:** Thời gian đợi giữa 2 lần cào từ page cuối về page 2 của truyenfull để cào các truyện còn lại: 1 \* 20 là 20 giây
 
 - **TRUYENFULL_HOMEPAGE:** Domain của truyenfull (Đổi trong trường hợp truyenfull đổi)
+
+# Cài đặt ban đầu (trên VPS mới)
+
+## Yêu cầu:
+- python 3.10 trở lên (Nên cài trên ubuntu 22.04 trở lên, đã có sẵn python 3.10 +)
+
+## Cài đặt:
+
+> git clone https://github.com/KiritoU/truyenfull_lovetruyenqq.git
+
+> Copy file settings.py vào folder truyenfull_lovetruyenqq và chỉnh sửa nội dung file settings.py theo thực tế
+
+> python3 -m venv venv
+
+> source venv/bin/activate
+
+> pip install -r requirements.txt
 
 # Trong trường hợp restart VPS cần chạy các lệnh sau sau khi ssh vào VPS
 
