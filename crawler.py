@@ -77,6 +77,9 @@ class Crawler:
         if not chapter_content:
             return
 
+        for watermark, watermark_replacement in CONFIG.WATERMARK_REPLACEMENTS.items():
+            chapter_content = chapter_content.replace(watermark, watermark_replacement)
+
         if CONFIG.DEBUG:
             chapter_post_slug = _chapter.get_chapter_slug(
                 chapter_name=chapter_name, story_title=story_title
